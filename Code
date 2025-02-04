@@ -1,0 +1,91 @@
+import { useState, useEffect } from 'react';
+
+const VintageClock = () => {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const hours = time.getHours() % 12;
+  const minutes = time.getMinutes();
+  const seconds = time.getSeconds();
+
+  const hourDegrees = (hours * 30) + (minutes / 2);
+  const minuteDegrees = (minutes * 6) + (seconds / 10);
+  const secondDegrees = seconds * 6;
+
+  return (
+    <div className="w-64 h-64 relative">
+      <svg viewBox="0 0 200 200" className="w-full h-full">
+        {/* Outer ring */}
+        <circle cx="100" cy="100" r="95" fill="#f97316" stroke="#1d4ed8" strokeWidth="8"/>
+        
+        {/* Inner circle */}
+        <circle cx="100" cy="100" r="85" fill="#fff"/>
+        
+        {/* Hour markers */}
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30) * Math.PI / 180;
+          const x1 = 100 + 75 * Math.sin(angle);
+          const y1 = 100 - 75 * Math.cos(angle);
+          const x2 = 100 + 85 * Math.sin(angle);
+          const y2 = 100 - 85 * Math.cos(angle);
+          return (
+            <line
+              key={i}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="#1d4ed8"
+              strokeWidth={i % 3 === 0 ? "4" : "2"}
+            />
+          );
+        })}
+
+        {/* Decorative elements */}
+        <circle cx="100" cy="100" r="5" fill="#1d4ed8"/>
+        <text x="100" y="45" textAnchor="middle" fill="#1d4ed8" className="text-xl font-serif">XII</text>
+        <text x="155" y="105" textAnchor="middle" fill="#1d4ed8" className="text-xl font-serif">III</text>
+        <text x="100" y="165" textAnchor="middle" fill="#1d4ed8" className="text-xl font-serif">VI</text>
+        <text x="45" y="105" textAnchor="middle" fill="#1d4ed8" className="text-xl font-serif">IX</text>
+
+        {/* Clock hands */}
+        <line
+          x1="100"
+          y1="100"
+          x2={100 + 50 * Math.sin(hourDegrees * Math.PI / 180)}
+          y2={100 - 50 * Math.cos(hourDegrees * Math.PI / 180)}
+          stroke="#1d4ed8"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <line
+          x1="100"
+          y1="100"
+          x2={100 + 70 * Math.sin(minuteDegrees * Math.PI / 180)}
+          y2={100 - 70 * Math.cos(minuteDegrees * Math.PI / 180)}
+          stroke="#1d4ed8"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <line
+          x1="100"
+          y1="100"
+          x2={100 + 75 * Math.sin(secondDegrees * Math.PI / 180)}
+          y2={100 - 75 * Math.cos(secondDegrees * Math.PI / 180)}
+          stroke="#f97316"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+};
+
+export default VintageClock;
